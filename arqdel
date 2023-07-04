@@ -1,0 +1,66 @@
+#!/bin/bash
+
+##  ARQDEL.SH
+##  -------------------
+##  REALIZA LIMPEZA DO DIRETORIO INTEGRA 
+
+## @thibac10 - Thiago B. (Criado em 08.06.2023)
+
+## ///////////////////////////////////////////////////////
+
+version="V1.0.1"
+
+#############  MAIN  ###########################
+
+TIME_TODAY=`date +'%H'`
+
+if [ $TIME_TODAY -gt 12 ];
+	then
+	# Define data corrente para o dia anterior
+	date_with_bar=$(date -d 'yesterday' '+%d/%m')          #dd/mm
+	date_short=$(date -d 'yesterday' '+%d%m')              #ddmm
+	date_long=$(date -d 'yesterday' '+%d%m%y')             #ddmmaaaa
+	
+else
+	# Define data corrente para anteontem
+	date_with_bar=$(date -d 'yesterday - 1 day' '+%d/%m')  #dd/mm
+	date_short=$(date -d 'yesterday - 1 day' '+%d%m')      #ddmm
+	date_long=$(date -d 'yesterday - 1 day' '+%d%m%y')     #ddmmaaaa
+fi
+
+cd /fs1/integra/
+
+if [ $(pwd) = '/fs1/integra' ];
+	then
+	clear
+	
+	# Verifica se existe algum arquivo para excluir
+	ls *$date_long* &> /dev/null
+	if [ $? -eq 2 ];
+		then
+		echo -e "\n  # ARQDEL\n  --------\n\n  Nao ha arquivos a serem removidos.  ($date_with_bar) \n  -------------------------------------------"
+		sleep 2
+	else
+		echo -e "\n  Arquivos a serem removidos:  ($date_with_bar) \n----------------------------------------"
+		ls *$date_long*
+		ls agenda.*$date_short*
+		echo -e "\n  Tecle [ENTER] para continuar..."
+		read
+		rm *$date_long*
+		rm agenda.*$date_short*
+		clear
+		echo " +-------------------------------------------------+"
+		echo " |     Arquivos do dia $date_with_bar excluidos.            |"
+		echo " +-------------------------------------------------+"
+		sleep 1
+	fi
+else
+
+	# Informa erro
+	clear
+	echo -e "\n  **  ALERTA  **"
+	echo " +---------------------------------------------------------------+"
+	echo " |     Ocorreu um erro ao tentar acessar o diretorio INTEGRA.    |"
+	echo " +---------------------------------------------------------------+"
+	sleep 3
+fi
